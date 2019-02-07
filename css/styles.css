@@ -23,8 +23,8 @@ html, body{
     width: 100%;
     display: flex;
     justify-content: flex-start;
-    transform: translateX(0); 
-    transition: margin-left .5s ease-out; 
+    transform: translateX(0);
+    transition: transform .5s ease-out;
 }
 
 .slide {
