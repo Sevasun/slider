@@ -90,6 +90,12 @@ html, body{
   transition: background-color .3s ease;
 }
 
+.pagination-btn:hover,
+.pagination-btn:focus {
+  outline: none;
+  background-color: rgba(0,0,0, .25);
+}
+
 .active .pagination-btn {
   background-color: rgba(0,0,0,.4);
 }
