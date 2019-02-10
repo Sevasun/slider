@@ -6,3 +6,4 @@
 4. touch events
 5. json slides
 6. tabs with json sliders
+7. ES6+
