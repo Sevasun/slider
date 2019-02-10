@@ -6,10 +6,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		pagination: true
 	});
 
-	let carousel = new Slider({
-		slider: '.carousel',
-		autoplay: true
-	});
+	// let carousel = new Slider({
+	// 	slider: '.carousel',
+	// 	autoplay: true
+	// });
 });
 
 // prototype
@@ -36,7 +36,7 @@ function Slider(options) {
 	this.slide = this.slideset.querySelectorAll(settings.slide);
 	this.autoplay = settings.autoplay;
 	this.autoplayDelay = settings.autoplayDelay;
-	this.autoplaySpeed = settings.autoplaySpeed;
+	this.autoplaySpeed = settings.animationSpeed;
 	this.prevBtn = this.slider.querySelector(settings.prevBtn);
 	this.nextBtn = this.slider.querySelector(settings.nextBtn);
 	this.pagination = settings.pagination;
@@ -44,66 +44,75 @@ function Slider(options) {
 	let i = 0,
 		offset = 0,
 		currentSlide = context.slide[i],
-		slideWidth = currentSlide.offsetWidth;
+		galleryWidth = context.slider.offsetWidth,
+		slideWidth = currentSlide.offsetWidth,
+		diffWidth = this.slide.length * slideWidth - galleryWidth;
 
 	currentSlide.classList.add('current');
 
 	// slide moving function
 	let move = function() {
 		currentSlide.classList.remove('current');
+
+		if (i >= context.slide.length) {
+			i = 0;
+		};
+
+		if (i < 0) {
+			i = context.slide.length - 1;
+			offset = -1 * diffWidth;
+		};
+
+		if (slideWidth * i <= diffWidth) {
+			offset = -1 * slideWidth * i;
+		};
+
 		currentSlide = context.slide[i];
 		currentSlide.classList.add('current');
-		offset = -1 * slideWidth * i;
 		context.slideset.style.transform = `translateX(${offset}px)`;
+		return currentSlide;
 	};
 
 	this.moveRight = function() {
 		i++;
-		if (i >= context.slide.length) {
-			i = 0;
-		};
+		
 		move();
 	};
 
 	this.moveLeft = function() {
 		i--;
-		console.log('i:' + i);
-		if (i < 0) {
-			i = context.slide.length - 1;
-		};
+		
 		move();
 	};
 
 	// pagination section
 	if (this.pagination) {
 		// create pagination block
-		let pageList = createPagination(context.slider);
+		this.pageList = createPagination(context.slider);
 
 		// create pagination buttons
 		for (let j = 0; j < this.slide.length; j++) {
-			createPaginationButton(pageList, j);
+			createPaginationButton(this.pageList, j);
 		};
 
-		let paginationItem = pageList.querySelectorAll('li');
-		let currentPaginationItem = paginationItem[i];
-		currentPaginationItem.classList.add('active');
+		this.paginationItem = this.pageList.querySelectorAll('li');
+		this.currentPaginationItem = addPaginationClass(this.paginationItem, i);
 
 		// pagination buttons functionality
-		for (let j = 0; j < paginationItem.length; j++) {
-			let pageBtn = paginationItem[j].querySelector('.pagination-btn');
+		for (let j = 0; j < this.paginationItem.length; j++) {
+			let pageBtn = this.paginationItem[j].querySelector('.pagination-btn');
 			pageBtn.addEventListener('click', function() {
 				i = j;
 				move();
-				currentPaginationItem.classList.remove('active');
-				currentPaginationItem = paginationItem[i];
-				currentPaginationItem.classList.add('active');
+				context.currentPaginationItem.classList.remove('active');
+				context.currentPaginationItem = addPaginationClass(context.paginationItem, i);
 			});
 		};
 	};
 
 	// autoplay function
 	if (this.autoplay) {
-		context.slideset.style = `transition-duration:${this.autoplaySpeed}ms`;
+		context.slideset.style = `transition-duration:${context.autoplaySpeed}ms`;
 		setInterval(context.moveRight, context.autoplayDelay);
 	};
 
@@ -111,10 +120,18 @@ function Slider(options) {
 	this.nextBtn.addEventListener('click', function(e) {
 		e.preventDefault();
 		context.moveRight();
+		if (context.pagination) {
+			context.currentPaginationItem.classList.remove('active');
+			context.currentPaginationItem = addPaginationClass(context.paginationItem, i);
+		}
 	});
 	this.prevBtn.addEventListener('click', function(e) {
 		e.preventDefault();
 		context.moveLeft();
+		if (context.pagination) {
+			context.currentPaginationItem.classList.remove('active');
+			context.currentPaginationItem = addPaginationClass(context.paginationItem, i);
+		}
 	});
 };
 
@@ -146,4 +163,10 @@ createPaginationButton = function(list, counter) {
 	paginationButton.classList.add('pagination-btn');
 	paginationButton.innerHTML = `<span class="number">${counter + 1}</span>`;
 	paginationButton = paginationLi.appendChild(paginationButton);
+}
+
+addPaginationClass = function(item, i) {
+	let currentItem = item[i];
+	currentItem.classList.add('active');
+	return currentItem;
 }
