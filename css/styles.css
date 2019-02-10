@@ -7,11 +7,26 @@ html, body{
   box-sizing: border-box;
 }
 
-.slider,
-.carousel {
+.slider {
   width: 600px;
   margin: 20px auto;
   position: relative;
+}
+
+.carousel {
+  width: 800px;
+  margin: 20px auto;
+  position: relative;
+}
+
+.gallery {
+  width: 1000px;
+  margin: 20px auto;
+  position: relative;
+}
+
+.carousel .slide {
+  width: 50%;
 }
 
 .mask {

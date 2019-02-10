@@ -6,10 +6,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		pagination: true
 	});
 
-	// let carousel = new Slider({
-	// 	slider: '.carousel',
-	// 	autoplay: true
-	// });
+	let carousel = new Slider({
+		slider: '.gallery',
+		pagination: true,
+		autoplay: true,
+		step: 2
+	});
 });
 
 // prototype
@@ -21,6 +23,7 @@ function Slider(options) {
 		slide: '.slide',
 		prevBtn: '.btn-prev',
 		nextBtn: '.btn-next',
+		step: 1,
 		autoplay: false,
 		autoplayDelay: 5000,
 		animationSpeed: 1000,
@@ -29,109 +32,122 @@ function Slider(options) {
 
 	let settings = merge(options, defaultOptions);
 
-	let context = this;
+	this.sliderList = document.querySelectorAll(settings.slider);
+	this.sliderList = Array.prototype.slice.call(this.sliderList, 0);
 
-	this.slider = document.querySelector(settings.slider);
-	this.slideset = this.slider.querySelector(settings.slideset);
-	this.slide = this.slideset.querySelectorAll(settings.slide);
-	this.autoplay = settings.autoplay;
-	this.autoplayDelay = settings.autoplayDelay;
-	this.autoplaySpeed = settings.animationSpeed;
-	this.prevBtn = this.slider.querySelector(settings.prevBtn);
-	this.nextBtn = this.slider.querySelector(settings.nextBtn);
-	this.pagination = settings.pagination;
+	this.sliderList.forEach(function(slider) {
+		let context = this;
+		let slideset = slider.querySelector(settings.slideset);
+		let slide = slider.querySelectorAll(settings.slide);
+		let prevBtn = slider.querySelector(settings.prevBtn);
+		let nextBtn = slider.querySelector(settings.nextBtn);
+		let step = settings.step;
+		let pagination = settings.pagination;
+		let autoplay = settings.autoplay;
+		let autoplayDelay = settings.autoplayDelay;
+		let autoplaySpeed = settings.animationSpeed;
 
-	let i = 0,
-		offset = 0,
-		currentSlide = context.slide[i],
-		galleryWidth = context.slider.offsetWidth,
-		slideWidth = currentSlide.offsetWidth,
-		diffWidth = this.slide.length * slideWidth - galleryWidth;
+		let i = 0,
+			offset = 0,
+			currentSlide = slide[i],
+			galleryWidth = slider.offsetWidth,
+			slideWidth = currentSlide.offsetWidth,
+			diffWidth = slide.length * slideWidth - galleryWidth;
 
-	currentSlide.classList.add('current');
-
-	// slide moving function
-	let move = function() {
-		currentSlide.classList.remove('current');
-
-		if (i >= context.slide.length) {
-			i = 0;
-		};
-
-		if (i < 0) {
-			i = context.slide.length - 1;
-			offset = -1 * diffWidth;
-		};
-
-		if (slideWidth * i <= diffWidth) {
-			offset = -1 * slideWidth * i;
-		};
-
-		currentSlide = context.slide[i];
 		currentSlide.classList.add('current');
-		context.slideset.style.transform = `translateX(${offset}px)`;
-		return currentSlide;
-	};
 
-	this.moveRight = function() {
-		i++;
-		
-		move();
-	};
+		// slide moving function
+		let move = function() {
+			currentSlide.classList.remove('current');
 
-	this.moveLeft = function() {
-		i--;
-		
-		move();
-	};
+			if (i >= slide.length) {
+				i = 0;
+			};
 
-	// pagination section
-	if (this.pagination) {
-		// create pagination block
-		this.pageList = createPagination(context.slider);
+			if (i < 0) {
+				i = slide.length - 1;
+				offset = -1 * diffWidth;
+			};
 
-		// create pagination buttons
-		for (let j = 0; j < this.slide.length; j++) {
-			createPaginationButton(this.pageList, j);
+			if (slideWidth * i <= diffWidth + 1) {
+				offset = -1 * slideWidth * i;
+			} else {
+				offset = -1 * diffWidth;
+			};
+
+			currentSlide = slide[i];
+			currentSlide.classList.add('current');
+			slideset.style.transform = `translateX(${offset}px)`;
+			return currentSlide;
 		};
 
-		this.paginationItem = this.pageList.querySelectorAll('li');
-		this.currentPaginationItem = addPaginationClass(this.paginationItem, i);
-
-		// pagination buttons functionality
-		for (let j = 0; j < this.paginationItem.length; j++) {
-			let pageBtn = this.paginationItem[j].querySelector('.pagination-btn');
-			pageBtn.addEventListener('click', function() {
-				i = j;
-				move();
-				context.currentPaginationItem.classList.remove('active');
-				context.currentPaginationItem = addPaginationClass(context.paginationItem, i);
-			});
+		let moveRight = function() {
+			i = i + step;
+			move();
+			if (pagination) {
+				currentPaginationItem.classList.remove('active');
+				currentPaginationItem = addPaginationClass(paginationItem, i);
+			}
 		};
-	};
 
-	// autoplay function
-	if (this.autoplay) {
-		context.slideset.style = `transition-duration:${context.autoplaySpeed}ms`;
-		setInterval(context.moveRight, context.autoplayDelay);
-	};
+		let moveLeft = function() {
+			i = i - step;
+			move();
+			if (pagination) {
+				currentPaginationItem.classList.remove('active');
+				currentPaginationItem = addPaginationClass(paginationItem, i);
+			}
+		};
 
-	// nav buttons events
-	this.nextBtn.addEventListener('click', function(e) {
-		e.preventDefault();
-		context.moveRight();
-		if (context.pagination) {
-			context.currentPaginationItem.classList.remove('active');
-			context.currentPaginationItem = addPaginationClass(context.paginationItem, i);
-		}
-	});
-	this.prevBtn.addEventListener('click', function(e) {
-		e.preventDefault();
-		context.moveLeft();
-		if (context.pagination) {
-			context.currentPaginationItem.classList.remove('active');
-			context.currentPaginationItem = addPaginationClass(context.paginationItem, i);
-		}
+		// pagination section
+		if (pagination) {
+			// create pagination block
+			let pageList = createPagination(slider);
+
+			// create pagination buttons
+			for (let j = 0; j < slide.length; j++) {
+				createPaginationButton(pageList, j);
+			};
+
+			var paginationItem = pageList.querySelectorAll('li');
+			var currentPaginationItem = addPaginationClass(paginationItem, i);
+
+			// pagination buttons functionality
+			for (let j = 0; j < paginationItem.length; j++) {
+				let pageBtn = paginationItem[j].querySelector('.pagination-btn');
+				pageBtn.addEventListener('click', function() {
+					i = j;
+					move();
+					currentPaginationItem.classList.remove('active');
+					currentPaginationItem = addPaginationClass(paginationItem, i);
+				});
+			};
+		};
+
+		// autoplay function
+		if (autoplay) {
+			slideset.style = `transition-duration:${autoplaySpeed}ms`;
+			setInterval(moveRight, autoplayDelay);
+
+		};
+
+		// nav buttons events
+		nextBtn.addEventListener('click', function(e) {
+			e.preventDefault();
+			moveRight();
+			// if (pagination) {
+			// 	currentPaginationItem.classList.remove('active');
+			// 	currentPaginationItem = addPaginationClass(paginationItem, i);
+			// }
+		});
+		prevBtn.addEventListener('click', function(e) {
+			e.preventDefault();
+			moveLeft();
+			// if (pagination) {
+			// 	currentPaginationItem.classList.remove('active');
+			// 	currentPaginationItem = addPaginationClass(paginationItem, i);
+			// }
+		});
 	});
 };
 
