@@ -1,9 +1,10 @@
 # slider
 
-1. default oop slider
+1. default oop slider - done!
 2. pagination - done!
-3. separate sliders
-4. touch events
-5. json slides
-6. tabs with json sliders
-7. ES6+
+3. separate sliders - done!
+4. step size - done!
+5. touch events
+6. json slides
+7. tabs with json sliders
+8. ES6+
