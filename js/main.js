@@ -1,12 +1,12 @@
 // init
 document.addEventListener('DOMContentLoaded', function() {
-	let slider = new Slider({
+	new Slider({
 		// add settings form defaultOptions list
 		slider: '.slider',
 		pagination: true
 	});
 
-	let carousel = new Slider({
+	new Slider({
 		slider: '.gallery',
 		pagination: true,
 		autoplay: true,
@@ -113,15 +113,29 @@ function Slider(options) {
 			var currentPaginationItem = addPaginationClass(paginationItem, i);
 
 			// pagination buttons functionality
-			for (let j = 0; j < paginationItem.length; j++) {
-				let pageBtn = paginationItem[j].querySelector('.pagination-btn');
-				pageBtn.addEventListener('click', function() {
-					i = j;
-					move();
-					currentPaginationItem.classList.remove('active');
-					currentPaginationItem = addPaginationClass(paginationItem, i);
-				});
-			};
+			// for (let j = 0; j < paginationItem.length; j++) {
+			// 	let pageBtn = paginationItem[j].querySelector('.pagination-btn');
+			// 	pageBtn.addEventListener('click', function() {
+			// 		i = j;
+			// 		move();
+			// 		currentPaginationItem.classList.remove('active');
+			// 		currentPaginationItem = addPaginationClass(paginationItem, i);
+			// 	});
+			// };
+			pageList.addEventListener('click', function(e) {
+				if (e.target.className == "pagination-btn") {
+					let clickedItem = e.target;
+					let clickedLi = clickedItem.parentElement;
+					for (let j = 0; j < paginationItem.length; j++) {
+						if (paginationItem[j] === clickedLi) {
+							i = j;
+							move();
+							currentPaginationItem.classList.remove('active');
+							currentPaginationItem = addPaginationClass(paginationItem, i);
+						}
+					}
+				}
+			});
 		};
 
 		// autoplay function
