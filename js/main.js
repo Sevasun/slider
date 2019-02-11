@@ -24,6 +24,7 @@ function Slider(options) {
 		prevBtn: '.btn-prev',
 		nextBtn: '.btn-next',
 		step: 1,
+		dragSense: 100,
 		autoplay: false,
 		autoplayDelay: 5000,
 		animationSpeed: 1000,
@@ -31,6 +32,7 @@ function Slider(options) {
 	};
 
 	let settings = merge(options, defaultOptions);
+	let body = document.querySelector('body');
 
 	this.sliderList = document.querySelectorAll(settings.slider);
 	this.sliderList = Array.prototype.slice.call(this.sliderList, 0);
@@ -42,10 +44,15 @@ function Slider(options) {
 		let prevBtn = slider.querySelector(settings.prevBtn);
 		let nextBtn = slider.querySelector(settings.nextBtn);
 		let step = settings.step;
+		let dragSense = settings.dragSense;
 		let pagination = settings.pagination;
 		let autoplay = settings.autoplay;
 		let autoplayDelay = settings.autoplayDelay;
 		let autoplaySpeed = settings.animationSpeed;
+
+		let movingX = 0;
+		let startPosition = 0;
+		let mouseDown = 0;
 
 		let i = 0,
 			offset = 0,
@@ -113,15 +120,6 @@ function Slider(options) {
 			var currentPaginationItem = addPaginationClass(paginationItem, i);
 
 			// pagination buttons functionality
-			// for (let j = 0; j < paginationItem.length; j++) {
-			// 	let pageBtn = paginationItem[j].querySelector('.pagination-btn');
-			// 	pageBtn.addEventListener('click', function() {
-			// 		i = j;
-			// 		move();
-			// 		currentPaginationItem.classList.remove('active');
-			// 		currentPaginationItem = addPaginationClass(paginationItem, i);
-			// 	});
-			// };
 			pageList.addEventListener('click', function(e) {
 				if (e.target.className == "pagination-btn") {
 					let clickedItem = e.target;
@@ -149,19 +147,76 @@ function Slider(options) {
 		nextBtn.addEventListener('click', function(e) {
 			e.preventDefault();
 			moveRight();
-			// if (pagination) {
-			// 	currentPaginationItem.classList.remove('active');
-			// 	currentPaginationItem = addPaginationClass(paginationItem, i);
-			// }
 		});
 		prevBtn.addEventListener('click', function(e) {
 			e.preventDefault();
 			moveLeft();
-			// if (pagination) {
-			// 	currentPaginationItem.classList.remove('active');
-			// 	currentPaginationItem = addPaginationClass(paginationItem, i);
-			// }
 		});
+
+		//drag'n'drop events
+		slideset.addEventListener('mousedown', function(e) {
+			dragStart(e, e.clientX, slideset);
+		});
+
+		slideset.addEventListener('mousemove', function(e) {
+			if (mouseDown) {
+				dragMove(e, e.clientX, slideset);
+			}
+		});
+
+		body.addEventListener('mouseup', function(e) {
+			dragEnd(slideset);
+		});
+
+		slideset.addEventListener('touchstart', function(e) {
+			dragStart(e, e.changedTouches[0].clientX, slideset);
+		});
+
+		slideset.addEventListener('touchmove', function(e) {
+			if (mouseDown) {
+				dragMove(e, e.changedTouches[0].clientX, slideset);
+			}
+		});
+
+		slideset.addEventListener('touchend', function(e) {
+			dragEnd(slideset);
+		});
+
+		// drag'n'drop functions
+		let dragStart = function(event, eventCoord, target) {
+			event.preventDefault();
+			startPosition = eventCoord;
+			mouseDown = 1;
+			target.style.transitionDuration = '0ms';
+		}
+		
+		let dragMove = function(event, eventCoord, target) {
+			event.preventDefault();
+			movingX = startPosition - eventCoord;
+			offset -= movingX / 100;
+			target.style.transform = `translateX(${offset}px)`;
+		}
+
+		let dragEnd = function(target) {
+			target.style.removeProperty('transition-duration');
+
+			if (slideWidth * i <= diffWidth + 1) {
+				offset = -1 * slideWidth * i;
+			} else {
+				offset = -1 * diffWidth;
+			};
+
+			target.style.transform = `translateX(${offset}px)`;
+
+			if (mouseDown) {
+				if (movingX > +dragSense) {
+					moveRight();
+				} else if (movingX < -dragSense) {
+					moveLeft();
+				}
+				mouseDown = 0;
+			}
+		}
 	});
 };
 
@@ -176,7 +231,7 @@ function merge(obj1, obj2) {
 	return obj1;
 };
 
-createPagination = function(holder) {
+let createPagination = function(holder) {
 	let pageBlock = document.createElement('div');
 	pageBlock.classList.add('pagination');
 	let pageList = document.createElement('ul');
@@ -186,7 +241,7 @@ createPagination = function(holder) {
 	return pageList;
 };
 
-createPaginationButton = function(list, counter) {
+let createPaginationButton = function(list, counter) {
 	let paginationLi = document.createElement('li');
 	paginationLi = list.appendChild(paginationLi);
 	let paginationButton = document.createElement('button');
@@ -195,7 +250,7 @@ createPaginationButton = function(list, counter) {
 	paginationButton = paginationLi.appendChild(paginationButton);
 }
 
-addPaginationClass = function(item, i) {
+let addPaginationClass = function(item, i) {
 	let currentItem = item[i];
 	currentItem.classList.add('active');
 	return currentItem;
