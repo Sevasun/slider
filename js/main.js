@@ -218,40 +218,40 @@ function Slider(options) {
 			}
 		}
 	});
-};
 
-// common functions
-function merge(obj1, obj2) {
-	let newObj = {};
-	for (let key in obj2) {
-		if (!obj1.hasOwnProperty(key)) {
-			obj1[key] = obj2[key];
+	// common functions
+	function merge(obj1, obj2) {
+		let newObj = {};
+		for (let key in obj2) {
+			if (!obj1.hasOwnProperty(key)) {
+				obj1[key] = obj2[key];
+			};
 		};
+		return obj1;
 	};
-	return obj1;
+
+	function createPagination(holder) {
+		let pageBlock = document.createElement('div');
+		pageBlock.classList.add('pagination');
+		let pageList = document.createElement('ul');
+		pageList.classList.add('pagination-list');
+		pageBlock = holder.appendChild(pageBlock);
+		pageList = pageBlock.appendChild(pageList);
+		return pageList;
+	};
+
+	function createPaginationButton(list, counter) {
+		let paginationLi = document.createElement('li');
+		paginationLi = list.appendChild(paginationLi);
+		let paginationButton = document.createElement('button');
+		paginationButton.classList.add('pagination-btn');
+		paginationButton.innerHTML = `<span class="number">${counter + 1}</span>`;
+		paginationButton = paginationLi.appendChild(paginationButton);
+	}
+
+	function addPaginationClass(item, i) {
+		let currentItem = item[i];
+		currentItem.classList.add('active');
+		return currentItem;
+	}
 };
-
-let createPagination = function(holder) {
-	let pageBlock = document.createElement('div');
-	pageBlock.classList.add('pagination');
-	let pageList = document.createElement('ul');
-	pageList.classList.add('pagination-list');
-	pageBlock = holder.appendChild(pageBlock);
-	pageList = pageBlock.appendChild(pageList);
-	return pageList;
-};
-
-let createPaginationButton = function(list, counter) {
-	let paginationLi = document.createElement('li');
-	paginationLi = list.appendChild(paginationLi);
-	let paginationButton = document.createElement('button');
-	paginationButton.classList.add('pagination-btn');
-	paginationButton.innerHTML = `<span class="number">${counter + 1}</span>`;
-	paginationButton = paginationLi.appendChild(paginationButton);
-}
-
-let addPaginationClass = function(item, i) {
-	let currentItem = item[i];
-	currentItem.classList.add('active');
-	return currentItem;
-}
