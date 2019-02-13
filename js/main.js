@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	new Slider({
 		// add settings form defaultOptions list
 		slider: '.slider',
-		pagination: true
+		pagination: true,
+		loadMore: true
 	});
 
 	new Slider({
@@ -28,7 +29,8 @@ function Slider(options) {
 		autoplay: false,
 		autoplayDelay: 5000,
 		animationSpeed: 1000,
-		pagination: false
+		pagination: false,
+		loadMore: false
 	};
 
 	let settings = merge(options, defaultOptions);
@@ -49,6 +51,7 @@ function Slider(options) {
 		let autoplay = settings.autoplay;
 		let autoplayDelay = settings.autoplayDelay;
 		let autoplaySpeed = settings.animationSpeed;
+		let loadMore = settings.loadMore;
 
 		let movingX = 0;
 		let startPosition = 0;
@@ -137,6 +140,30 @@ function Slider(options) {
 		slideset.addEventListener('touchend', function(e) {
 			dragEnd(slideset);
 		});
+
+		if(loadMore && slider.querySelector('.load-more')) {
+			let loadMoreButton = slider.querySelector('.load-more');
+			let loadMoreAddress = loadMoreButton.getAttribute('data-link');
+
+			loadMoreButton.addEventListener('click', function() {
+				getSlides(loadMoreAddress);
+			});
+
+			
+		};
+
+		function getSlides(address) {
+			let request = new XMLHttpRequest();
+			request.open('GET', address);
+			request.send();
+
+			request.addEventListener('readystatechange', function() {
+				if(request.readyState == 4 && request.status == 200) {
+					let newSlides = request.responseText;
+					// slideset.appendChild(newSlides);
+				}
+			})
+		}
 
 		// slide moving function
 		function move() {

@@ -114,3 +114,19 @@ html, body{
 .active .pagination-btn {
   background-color: rgba(0,0,0,.4);
 }
+
+.load-more-holder {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.load-more {
+  background-color: #3b3;
+  color: white;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-align: center;
+  padding: 0.5em 1.5em;
+  border: 0;
+
+}
