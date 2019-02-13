@@ -63,49 +63,6 @@ function Slider(options) {
 
 		currentSlide.classList.add('current');
 
-		// slide moving function
-		let move = function() {
-			currentSlide.classList.remove('current');
-
-			if (i >= slide.length) {
-				i = 0;
-			};
-
-			if (i < 0) {
-				i = slide.length - 1;
-				offset = -1 * diffWidth;
-			};
-
-			if (slideWidth * i <= diffWidth + 1) {
-				offset = -1 * slideWidth * i;
-			} else {
-				offset = -1 * diffWidth;
-			};
-
-			currentSlide = slide[i];
-			currentSlide.classList.add('current');
-			slideset.style.transform = `translateX(${offset}px)`;
-			return currentSlide;
-		};
-
-		let moveRight = function() {
-			i = i + step;
-			move();
-			if (pagination) {
-				currentPaginationItem.classList.remove('active');
-				currentPaginationItem = addPaginationClass(paginationItem, i);
-			}
-		};
-
-		let moveLeft = function() {
-			i = i - step;
-			move();
-			if (pagination) {
-				currentPaginationItem.classList.remove('active');
-				currentPaginationItem = addPaginationClass(paginationItem, i);
-			}
-		};
-
 		// pagination section
 		if (pagination) {
 			// create pagination block
@@ -140,7 +97,6 @@ function Slider(options) {
 		if (autoplay) {
 			slideset.style = `transition-duration:${autoplaySpeed}ms`;
 			setInterval(moveRight, autoplayDelay);
-
 		};
 
 		// nav buttons events
@@ -182,22 +138,65 @@ function Slider(options) {
 			dragEnd(slideset);
 		});
 
+		// slide moving function
+		function move() {
+			currentSlide.classList.remove('current');
+
+			if (i >= slide.length) {
+				i = 0;
+			};
+
+			if (i < 0) {
+				i = slide.length - 1;
+				offset = -1 * diffWidth;
+			};
+
+			if (slideWidth * i <= diffWidth + 1) {
+				offset = -1 * slideWidth * i;
+			} else {
+				offset = -1 * diffWidth;
+			};
+
+			currentSlide = slide[i];
+			currentSlide.classList.add('current');
+			slideset.style.transform = `translateX(${offset}px)`;
+			return currentSlide;
+		};
+
+		function moveRight() {
+			i = i + step;
+			move();
+			if (pagination) {
+				currentPaginationItem.classList.remove('active');
+				currentPaginationItem = addPaginationClass(paginationItem, i);
+			}
+		};
+
+		function moveLeft() {
+			i = i - step;
+			move();
+			if (pagination) {
+				currentPaginationItem.classList.remove('active');
+				currentPaginationItem = addPaginationClass(paginationItem, i);
+			}
+		};
+
 		// drag'n'drop functions
-		let dragStart = function(event, eventCoord, target) {
+		function dragStart(event, eventCoord, target) {
 			event.preventDefault();
 			startPosition = eventCoord;
 			mouseDown = 1;
 			target.style.transitionDuration = '0ms';
 		}
 		
-		let dragMove = function(event, eventCoord, target) {
+		function dragMove(event, eventCoord, target) {
 			event.preventDefault();
 			movingX = startPosition - eventCoord;
 			offset -= movingX / 100;
 			target.style.transform = `translateX(${offset}px)`;
 		}
 
-		let dragEnd = function(target) {
+		function dragEnd(target) {
 			target.style.removeProperty('transition-duration');
 
 			if (slideWidth * i <= diffWidth + 1) {
@@ -219,17 +218,6 @@ function Slider(options) {
 		}
 	});
 
-	// common functions
-	function merge(obj1, obj2) {
-		let newObj = {};
-		for (let key in obj2) {
-			if (!obj1.hasOwnProperty(key)) {
-				obj1[key] = obj2[key];
-			};
-		};
-		return obj1;
-	};
-
 	function createPagination(holder) {
 		let pageBlock = document.createElement('div');
 		pageBlock.classList.add('pagination');
@@ -247,11 +235,22 @@ function Slider(options) {
 		paginationButton.classList.add('pagination-btn');
 		paginationButton.innerHTML = `<span class="number">${counter + 1}</span>`;
 		paginationButton = paginationLi.appendChild(paginationButton);
-	}
+	};
 
 	function addPaginationClass(item, i) {
 		let currentItem = item[i];
 		currentItem.classList.add('active');
 		return currentItem;
-	}
+	};
+
+	// common functions
+	function merge(obj1, obj2) {
+		let newObj = {};
+		for (let key in obj2) {
+			if (!obj1.hasOwnProperty(key)) {
+				obj1[key] = obj2[key];
+			};
+		};
+		return obj1;
+	};
 };
