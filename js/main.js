@@ -147,9 +147,8 @@ function Slider(options) {
 
 			loadMoreButton.addEventListener('click', function() {
 				getSlides(loadMoreAddress);
+				this.setAttribute('disabled', 'disabled');
 			});
-
-			
 		};
 
 		function getSlides(address) {
@@ -160,7 +159,9 @@ function Slider(options) {
 			request.addEventListener('readystatechange', function() {
 				if(request.readyState == 4 && request.status == 200) {
 					let newSlides = request.responseText;
-					// slideset.appendChild(newSlides);
+					slideset.insertAdjacentHTML('beforeend', newSlides);
+					slide = slider.querySelectorAll(settings.slide);
+					diffWidth = slide.length * slideWidth - galleryWidth;
 				}
 			})
 		}
