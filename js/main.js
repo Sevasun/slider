@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		autoplay: true,
 		step: 2
 	});
+
+	new AjaxTabs({
+		tabLinkHolder: ".tabset"
+	});
 });
 
 // prototype
@@ -39,8 +43,9 @@ function Slider(options) {
 	this.sliderList = document.querySelectorAll(settings.slider);
 	this.sliderList = Array.prototype.slice.call(this.sliderList, 0);
 
+	let context = this;
+
 	this.sliderList.forEach(function(slider) {
-		let context = this;
 		let slideset = slider.querySelector(settings.slideset);
 		let slide = slider.querySelectorAll(settings.slide);
 		let prevBtn = slider.querySelector(settings.prevBtn);
@@ -69,7 +74,7 @@ function Slider(options) {
 		// pagination section
 		if (pagination) {
 			// create pagination block
-			let pageList = createPagination(slider);
+			var pageList = createPagination(slider);
 
 			// create pagination buttons
 			for (let j = 0; j < slide.length; j++) {
@@ -79,7 +84,6 @@ function Slider(options) {
 			var paginationItem = pageList.querySelectorAll('li');
 			var currentPaginationItem = addPaginationClass(paginationItem, i);
 
-			// pagination buttons functionality
 			pageList.addEventListener('click', function(e) {
 				if (e.target.className == "pagination-btn") {
 					let clickedItem = e.target;
@@ -95,6 +99,24 @@ function Slider(options) {
 				}
 			});
 		};
+
+		// pagination buttons functionality
+		// function initPaginationEvents() {
+		// 	pageList.addEventListener('click', function(e) {
+		// 		if (e.target.className == "pagination-btn") {
+		// 			let clickedItem = e.target;
+		// 			let clickedLi = clickedItem.parentElement;
+		// 			for (let j = 0; j < paginationItem.length; j++) {
+		// 				if (paginationItem[j] === clickedLi) {
+		// 					i = j;
+		// 					move();
+		// 					currentPaginationItem.classList.remove('active');
+		// 					currentPaginationItem = addPaginationClass(paginationItem, i);
+		// 				}
+		// 			}
+		// 		}
+		// 	});
+		// };
 
 		// autoplay function
 		if (autoplay) {
@@ -162,9 +184,37 @@ function Slider(options) {
 					slideset.insertAdjacentHTML('beforeend', newSlides);
 					slide = slider.querySelectorAll(settings.slide);
 					diffWidth = slide.length * slideWidth - galleryWidth;
+					// TODO 
+					//==== refactor this shit
+					while(pageList.firstChild) {
+						pageList.firstChild.remove();
+					};
+					// create pagination buttons
+					for (let j = 0; j < slide.length; j++) {
+						createPaginationButton(pageList, j);
+					};
+
+					paginationItem = pageList.querySelectorAll('li');
+					currentPaginationItem = addPaginationClass(paginationItem, i);
+
+					pageList.addEventListener('click', function(e) {
+						if (e.target.className == "pagination-btn") {
+							let clickedItem = e.target;
+							let clickedLi = clickedItem.parentElement;
+							for (let j = 0; j < paginationItem.length; j++) {
+								if (paginationItem[j] === clickedLi) {
+									i = j;
+									move();
+									currentPaginationItem.classList.remove('active');
+									currentPaginationItem = addPaginationClass(paginationItem, i);
+								}
+							}
+						}
+					});
+					//====
 				}
-			})
-		}
+			});
+		};
 
 		// slide moving function
 		function move() {
@@ -270,15 +320,25 @@ function Slider(options) {
 		currentItem.classList.add('active');
 		return currentItem;
 	};
+};
 
-	// common functions
-	function merge(obj1, obj2) {
-		let newObj = {};
-		for (let key in obj2) {
-			if (!obj1.hasOwnProperty(key)) {
-				obj1[key] = obj2[key];
-			};
-		};
-		return obj1;
+function AjaxTabs(options) {
+	let defaultOptions = {
+		tabLinkHolder: ".tabset",
+		tabContentBlock: ".tab-content",
+		activeOnLoad: true
 	};
+
+	this.settings = merge(options, defaultOptions);
+}
+
+// common functions
+function merge(obj1, obj2) {
+	let newObj = {};
+	for (let key in obj2) {
+		if (!obj1.hasOwnProperty(key)) {
+			obj1[key] = obj2[key];
+		};
+	};
+	return obj1;
 };
