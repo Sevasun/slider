@@ -130,6 +130,11 @@ html, body{
   border: 0;
 }
 
+.tab-section {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+}
+
 .tabset {
   list-style: none;
   margin: 0 0 1rem;

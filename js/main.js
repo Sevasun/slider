@@ -330,11 +330,40 @@ function AjaxTabs(options) {
 	};
 
 	this.settings = merge(options, defaultOptions);
-}
+
+	let self = this;
+
+	this.tabLinkHolder = document.querySelector(this.settings.tabLinkHolder);
+	this.tabContentBlock = document.querySelector(this.settings.tabContentBlock);
+	this.activeOnLoad = this.settings.activeOnLoad;
+
+	this.tabsetItems = this.tabLinkHolder.querySelectorAll('li');
+	
+	this.tabLinkHolder.addEventListener('click', function(e) {
+		if(e.target.className == "tab-btn") {
+			let button = e.target;
+			let address = button.getAttribute('data-link');
+			let request = new XMLHttpRequest();
+			request.open('GET', address);
+			request.send();
+
+			request.addEventListener('readystatechange', function() {
+				if(request.readyState === 4 && request.status === 200) {
+					let newTab = document.createElement('div');
+					newTab.classList.add('tab');
+					newTab.innerHTML = request.responseText;
+					if(self.tabContentBlock.firstChild) {
+						self.tabContentBlock.firstChild.remove();
+					};
+					self.tabContentBlock.appendChild(newTab);
+				} 
+			})
+		};
+	});
+};
 
 // common functions
 function merge(obj1, obj2) {
-	let newObj = {};
 	for (let key in obj2) {
 		if (!obj1.hasOwnProperty(key)) {
 			obj1[key] = obj2[key];
