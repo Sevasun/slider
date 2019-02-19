@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	new AjaxTabs({
-		tabLinkHolder: ".tabset"
+		tabLinkHolder: ".tabset",
+		activeOnLoad: true
 	});
 });
 
@@ -326,7 +327,7 @@ function AjaxTabs(options) {
 	let defaultOptions = {
 		tabLinkHolder: ".tabset",
 		tabContentBlock: ".tab-content",
-		activeOnLoad: true
+		activeOnLoad: false
 	};
 
 	this.settings = merge(options, defaultOptions);
@@ -338,16 +339,36 @@ function AjaxTabs(options) {
 	this.activeOnLoad = this.settings.activeOnLoad;
 
 	this.tabsetItems = this.tabLinkHolder.querySelectorAll('li');
+
+	this.activeItem;
+
+	if(this.activeOnLoad) {
+		this.activeItem = this.tabsetItems[0].classList.add('active');
+		showTab(this.tabsetItems[0].querySelector('.tab-btn'));
+	}
 	
 	this.tabLinkHolder.addEventListener('click', function(e) {
 		if(e.target.className == "tab-btn") {
 			let button = e.target;
-			let address = button.getAttribute('data-link');
-			let request = new XMLHttpRequest();
-			request.open('GET', address);
-			request.send();
+			showTab(button);
+		};
+	});
 
-			request.addEventListener('readystatechange', function() {
+	// tab switching function
+	function showTab(btn) {
+		let address = btn.getAttribute('data-link');
+		let request = new XMLHttpRequest();
+
+		if(this.activeItem) {
+			this.activeItem.classList.remove('active');
+		}
+		this.activeItem = btn.parentNode;
+		this.activeItem.classList.add('active');
+		request.open('GET', address);
+		request.send();
+
+		request.addEventListener('readystatechange', function() {
+			try {
 				if(request.readyState === 4 && request.status === 200) {
 					let newTab = document.createElement('div');
 					newTab.classList.add('tab');
@@ -356,10 +377,14 @@ function AjaxTabs(options) {
 						self.tabContentBlock.firstChild.remove();
 					};
 					self.tabContentBlock.appendChild(newTab);
-				} 
-			})
-		};
-	});
+				} else if(request.readyState === 4 && request.status !== 200) {
+					throw new Error();
+				}
+			} catch(err) {
+				console.log(err);
+			}
+		});
+	};
 };
 
 // common functions
