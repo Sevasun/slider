@@ -3,22 +3,39 @@ import Slider from './modules/slider';
 
 // init
 document.addEventListener('DOMContentLoaded', function() {
-	new Slider({
+	// sliderInit();
+
+	galleryInit();
+
+	tabsInit();
+});
+
+function sliderInit() {
+	let slider = new Slider({
 		// add settings form defaultOptions list
 		slider: '.slider',
 		pagination: true,
 		loadMore: true
 	});
+	return slider;
+};
 
-	new Slider({
+function galleryInit() {
+	let gallery = new Slider({
 		slider: '.gallery',
 		pagination: true,
 		autoplay: true,
 		step: 2
 	});
+	return gallery;
+};
 
-	new AjaxTabs({
+function tabsInit() {
+	let tabs = new AjaxTabs({
 		tabLinkHolder: ".tabset",
 		activeOnLoad: true
 	});
-});
+	return tabs;
+}
+
+export default sliderInit;

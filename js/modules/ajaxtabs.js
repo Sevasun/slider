@@ -1,10 +1,12 @@
 import merge from './common';
+import sliderInit from '../main';
 
 function AjaxTabs(options) {
 	let defaultOptions = {
 		tabLinkHolder: ".tabset",
 		tabContentBlock: ".tab-content",
-		activeOnLoad: false
+		activeOnLoad: false,
+		galleryTabs: true
 	};
 
 	this.settings = merge(options, defaultOptions);
@@ -14,6 +16,7 @@ function AjaxTabs(options) {
 	this.tabLinkHolder = document.querySelector(this.settings.tabLinkHolder);
 	this.tabContentBlock = document.querySelector(this.settings.tabContentBlock);
 	this.activeOnLoad = this.settings.activeOnLoad;
+	this.galleryTabs = this.settings.galleryTabs;
 
 	this.tabsetItems = this.tabLinkHolder.querySelectorAll('li');
 
@@ -55,6 +58,9 @@ function AjaxTabs(options) {
 					self.tabContentBlock.firstChild.remove();
 				};
 				self.tabContentBlock.appendChild(newTab);
+				if(self.galleryTabs) {
+					sliderInit();
+				}
 			}
 		});
 	};
