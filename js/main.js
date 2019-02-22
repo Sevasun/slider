@@ -4,9 +4,7 @@ import Slider from './modules/slider';
 // init
 document.addEventListener('DOMContentLoaded', function() {
 	// sliderInit();
-
 	galleryInit();
-
 	tabsInit();
 });
 

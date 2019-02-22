@@ -93,11 +93,11 @@ function Slider(options) {
 			};
 
 			// nav buttons events
-			self.nextBtn.addEventListener('click', function(e) {
+			self.nextBtn.addEventListener('click', (e) => {
 				e.preventDefault();
 				self.moveRight();
 			});
-			self.prevBtn.addEventListener('click', function(e) {
+			self.prevBtn.addEventListener('click', (e) => {
 				e.preventDefault();
 				self.moveLeft();
 			});
@@ -108,9 +108,7 @@ function Slider(options) {
 
 				if (i >= self.slide.length) {
 					i = 0;
-				};
-
-				if (i < 0) {
+				} else if (i < 0) {
 					i = self.slide.length - 1;
 					offset = -1 * diffWidth;
 				};
