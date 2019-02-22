@@ -39,6 +39,24 @@ function AjaxTabs(options) {
 	// tab switching function
 	function showTab(btn) {
 		let address = btn.getAttribute('data-link');
+		// if(self.activeItem) {
+		// 	self.activeItem.classList.remove('active');
+		// }
+		// self.activeItem = btn.parentNode;
+		// self.activeItem.classList.add('active');
+		// let request = fetch(address)
+		// 	.then((response) => {
+		// 		let newTab = document.createElement('div');
+		// 		newTab.classList.add('tab');
+		// 		newTab.innerHTML = response.text();
+		// 		if(self.tabContentBlock.firstChild) {
+		// 			self.tabContentBlock.firstChild.remove();
+		// 		};
+		// 		self.tabContentBlock.appendChild(newTab);
+		// 		if(self.galleryTabs) {
+		// 			sliderInit();
+		// 		}
+		// 	});
 		let request = new XMLHttpRequest();
 
 		if(self.activeItem) {
