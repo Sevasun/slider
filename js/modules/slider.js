@@ -56,8 +56,8 @@ function Slider(options) {
 
 		runSlider();
 
-		// pagination section
 		function runSlider() {
+			// pagination section
 			if (self.pagination) {
 				// create pagination block
 				self.pageList = createPagination(self.slider);
@@ -220,46 +220,82 @@ function Slider(options) {
 		};
 
 		function getSlides(address) {
-			let request = new XMLHttpRequest();
-			request.open('GET', address);
-			request.send();
-			
-			request.addEventListener('readystatechange', function() {
-				if(request.readyState == 4 && request.status == 200) {
-					let newSlides = request.responseText;
-					self.slideset.insertAdjacentHTML('beforeend', newSlides);
-					self.slide = self.slider.querySelectorAll(self.settings.slide);
-					diffWidth = self.slide.length * slideWidth - galleryWidth;
-					// TODO 
-					//==== refactor this shit
-					while(self.pageList.firstChild) {
-						self.pageList.firstChild.remove();
-					};
-					// create pagination buttons
-					for (let j = 0; j < self.slide.length; j++) {
-						createPaginationButton(self.pageList, j);
-					};
+			let request = fetch(address)
+						.then((response) => response.text())
+						.then((value) => {
+							let newSlides = value;
+							self.slideset.insertAdjacentHTML('beforeend', newSlides);
+							self.slide = self.slider.querySelectorAll(self.settings.slide);
+							diffWidth = self.slide.length * slideWidth - galleryWidth;
+							// TODO 
+							//==== refactor this shit
+							while(self.pageList.firstChild) {
+								self.pageList.firstChild.remove();
+							};
+							// create pagination buttons
+							for (let j = 0; j < self.slide.length; j++) {
+								createPaginationButton(self.pageList, j);
+							};
 
-					self.paginationItem = self.pageList.querySelectorAll('li');
-					self.currentPaginationItem = addPaginationClass(self.paginationItem, i);
+							self.paginationItem = self.pageList.querySelectorAll('li');
+							self.currentPaginationItem = addPaginationClass(self.paginationItem, i);
 
-					self.pageList.addEventListener('click', function(e) {
-						if (e.target.className == "pagination-btn") {
-							let clickedItem = e.target;
-							let clickedLi = clickedItem.parentElement;
-							for (let j = 0; j < self.paginationItem.length; j++) {
-								if (self.paginationItem[j] === clickedLi) {
-									i = j;
-									self.move();
-									self.currentPaginationItem.classList.remove('active');
-									self.currentPaginationItem = addPaginationClass(self.paginationItem, i);
+							self.pageList.addEventListener('click', function(e) {
+								if (e.target.className == "pagination-btn") {
+									let clickedItem = e.target;
+									let clickedLi = clickedItem.parentElement;
+									for (let j = 0; j < self.paginationItem.length; j++) {
+										if (self.paginationItem[j] === clickedLi) {
+											i = j;
+											self.move();
+											self.currentPaginationItem.classList.remove('active');
+											self.currentPaginationItem = addPaginationClass(self.paginationItem, i);
+										}
+									}
 								}
-							}
-						}
-					});
-					//====
-				}
-			});
+							});
+							//====
+						})
+			// let request = new XMLHttpRequest();
+			// request.open('GET', address);
+			// request.send();
+			
+			// request.addEventListener('readystatechange', function() {
+			// 	if(request.readyState == 4 && request.status == 200) {
+			// 		let newSlides = request.responseText;
+			// 		self.slideset.insertAdjacentHTML('beforeend', newSlides);
+			// 		self.slide = self.slider.querySelectorAll(self.settings.slide);
+			// 		diffWidth = self.slide.length * slideWidth - galleryWidth;
+			// 		// TODO 
+			// 		//==== refactor this shit
+			// 		while(self.pageList.firstChild) {
+			// 			self.pageList.firstChild.remove();
+			// 		};
+			// 		// create pagination buttons
+			// 		for (let j = 0; j < self.slide.length; j++) {
+			// 			createPaginationButton(self.pageList, j);
+			// 		};
+
+			// 		self.paginationItem = self.pageList.querySelectorAll('li');
+			// 		self.currentPaginationItem = addPaginationClass(self.paginationItem, i);
+
+			// 		self.pageList.addEventListener('click', function(e) {
+			// 			if (e.target.className == "pagination-btn") {
+			// 				let clickedItem = e.target;
+			// 				let clickedLi = clickedItem.parentElement;
+			// 				for (let j = 0; j < self.paginationItem.length; j++) {
+			// 					if (self.paginationItem[j] === clickedLi) {
+			// 						i = j;
+			// 						self.move();
+			// 						self.currentPaginationItem.classList.remove('active');
+			// 						self.currentPaginationItem = addPaginationClass(self.paginationItem, i);
+			// 					}
+			// 				}
+			// 			}
+			// 		});
+			// 		//====
+			// 	}
+			// });
 		};
 	// });
 

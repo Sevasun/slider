@@ -39,16 +39,41 @@ function AjaxTabs(options) {
 	// tab switching function
 	function showTab(btn) {
 		let address = btn.getAttribute('data-link');
+		if(self.activeItem) {
+			self.activeItem.classList.remove('active');
+		}
+		self.activeItem = btn.parentNode;
+		self.activeItem.classList.add('active');
+		let request = fetch(address)
+			.then((response) => response.text())
+			.then((value) => {
+				let newTab = document.createElement('div');
+				newTab.classList.add('tab');
+				newTab.innerHTML = value;
+				if(self.tabContentBlock.firstChild) {
+					self.tabContentBlock.firstChild.remove();
+				};
+				self.tabContentBlock.appendChild(newTab);
+				
+				if(self.galleryTabs) {
+					sliderInit();
+				}
+			});
+		// let request = new XMLHttpRequest();
+
 		// if(self.activeItem) {
 		// 	self.activeItem.classList.remove('active');
 		// }
 		// self.activeItem = btn.parentNode;
 		// self.activeItem.classList.add('active');
-		// let request = fetch(address)
-		// 	.then((response) => {
+		// request.open('GET', address);
+		// request.send();
+
+		// request.addEventListener('readystatechange', function() {
+		// 	if(request.readyState === 4 && request.status === 200) {
 		// 		let newTab = document.createElement('div');
 		// 		newTab.classList.add('tab');
-		// 		newTab.innerHTML = response.text();
+		// 		newTab.innerHTML = request.responseText;
 		// 		if(self.tabContentBlock.firstChild) {
 		// 			self.tabContentBlock.firstChild.remove();
 		// 		};
@@ -56,31 +81,8 @@ function AjaxTabs(options) {
 		// 		if(self.galleryTabs) {
 		// 			sliderInit();
 		// 		}
-		// 	});
-		let request = new XMLHttpRequest();
-
-		if(self.activeItem) {
-			self.activeItem.classList.remove('active');
-		}
-		self.activeItem = btn.parentNode;
-		self.activeItem.classList.add('active');
-		request.open('GET', address);
-		request.send();
-
-		request.addEventListener('readystatechange', function() {
-			if(request.readyState === 4 && request.status === 200) {
-				let newTab = document.createElement('div');
-				newTab.classList.add('tab');
-				newTab.innerHTML = request.responseText;
-				if(self.tabContentBlock.firstChild) {
-					self.tabContentBlock.firstChild.remove();
-				};
-				self.tabContentBlock.appendChild(newTab);
-				if(self.galleryTabs) {
-					sliderInit();
-				}
-			}
-		});
+		// 	}
+		// });
 	};
 };
 
