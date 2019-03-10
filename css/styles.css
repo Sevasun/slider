@@ -114,3 +114,58 @@ html, body{
 .active .pagination-btn {
   background-color: rgba(0,0,0,.4);
 }
+
+.load-more-holder {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.load-more {
+  background-color: #3b3;
+  color: white;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-align: center;
+  padding: 0.5em 1.5em;
+  border: 0;
+}
+
+.tab-section {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+}
+
+.tabset {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tabset li {
+  padding: 0 10px;
+}
+
+.tabset li.active .tab-btn {
+  background-color: rgba(20, 20, 255, .8);
+  border-color: rgba(20, 20, 255, .8);
+}
+
+.tab-btn {
+  background-color: navy;
+  color: #fff;
+  display: inline-block;
+  vertical-align: top;
+  padding: 0.7em 1.5em;
+  border-radius: 5px;
+  font-weight: 700;
+  border: 2px solid navy;
+  cursor: pointer;
+  transition: background-color .3s ease;
+}
+
+.tab-btn:hover {
+  background-color: rgba(20, 20, 255, .8);
+}
